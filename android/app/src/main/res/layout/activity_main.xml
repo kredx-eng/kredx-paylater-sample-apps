@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/cardview_compat_inset_shadow"
+    tools:context="com.webprojectkotlin.MainActivity">
+    <WebView
+        android:id="@+id/my_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/img_close"
+            android:layout_width="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@color/teal_700"
+            android:layout_height="wrap_content"
+            tools:ignore="UseAppTint" />
+    </FrameLayout>
+</RelativeLayout>

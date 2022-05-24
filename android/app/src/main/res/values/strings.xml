@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BNPL webview</string>
+    <string name="select_image_from_gallery">Select Image from Gallery</string>
+    <string name="payment_gateway">Payment Gateway</string>
+    <string name="bnpl_register">Register</string>
+    <string name="todo">TODO</string>
+    <string name="title">Buy Now Pay Later</string>
+    <string name="heading2">A closed-loop B2B Digital Supply chain Financing Solution</string>
+</resources>
