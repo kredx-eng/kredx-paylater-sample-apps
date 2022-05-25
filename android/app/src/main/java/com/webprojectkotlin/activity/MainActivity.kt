@@ -36,7 +36,6 @@ import java.io.IOException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.schedule
 
 
 fun jsonToStr (s: String): JSONObject {
@@ -52,16 +51,14 @@ class MainActivity : AppCompatActivity(),
     private var safeBrowsingIsInitialized: Boolean = false
 
     protected var layoutWebView: View? = null
-    private val APP_IMAGE_DIR = "images";
+    private val APP_IMAGE_DIR = "images"
     val WEBVIEW_LOCAL_CURRENT_STAGE = "javascript:window.sessionStorage.getItem('current_stage');"
     val WEBJS_SESSION_STORAGE = "(function() { return JSON.stringify(sessionStorage); })();"
     val LOCAL_STORAGE_JS = "(function() { return JSON.stringify(localStorage); })();"
     var WEBVIEW_AUTH_JS = "(function() { return localStorage.getItem('auth'); })();"
-    var WEB_PAN_JS = "function() {return localStorage.getItem('company_pan')}";
-    var token = "";
-    var handler = Handler();
-    var flag = false;
-    var i= 0;
+    var token = ""
+    var handler = Handler()
+
     /**
      * Container for temp file uri
      *
@@ -83,25 +80,25 @@ class MainActivity : AppCompatActivity(),
      * @type WebSettings
      */
     protected var webViewSettings: WebSettings? = null
-
     var mGeoLocationRequestOrigin: String? = null
     var mGeoLocationCallback: GeolocationPermissions.Callback? = null
 
-    var REQUEST_CODE = 101
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lateinit var mUrl :String
         setContentView(R.layout.activity_main)
         val img_close by lazy { findViewById<ImageView>(R.id.img_close) }
-        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mUrl= intent.getStringExtra("url").toString();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        mUrl= intent.getStringExtra("url").toString()
         layoutWebView = findViewById(R.id.my_web_view)
-        webView = findViewById(R.id.my_web_view) as WebView
+        webView = findViewById<WebView>(R.id.my_web_view)
         webViewSettings = webView!!.settings
         webViewSettings!!.javaScriptEnabled = true
         webViewSettings!!.loadWithOverviewMode = true
         webViewSettings!!.allowFileAccess = true
-        webViewSettings!!.setGeolocationEnabled(true);
+        webViewSettings!!.setSupportMultipleWindows(true);
+        webViewSettings!!.javaScriptCanOpenWindowsAutomatically = true;
+        webViewSettings!!.setGeolocationEnabled(true)
         val recorder = PayloadRecorder()
         webView!!.addJavascriptInterface(recorder, "recorder")
 //        webView!!.evaluateJavascript("(function(){return window.getSelection().toString()})()",
@@ -137,7 +134,6 @@ class MainActivity : AppCompatActivity(),
                 request: WebResourceRequest
             ): WebResourceResponse? {
                 val payload = recorder.getPayload(request.method, request.url.toString())
-                Log.d("payload", payload.toString() + request.url);
                 Log.d("recorder", recorder.toString())
                 // handle the request with the given payload and return the response
                 return super.shouldInterceptRequest(view, request)
@@ -145,46 +141,6 @@ class MainActivity : AppCompatActivity(),
 
             override fun onPageFinished(view: WebView, url: String) {
                 super.onPageFinished(view, url)
-
-//                webView!!.evaluateJavascript(WEB_PAN_JS) { s ->
-//                    Log.d("Pan Number: ", s);
-//                    if (s != "\"{}\"") {
-//                        try {
-//                            var pan = "";
-//                            AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
-//                        }catch(e: JSONException) {
-//                            Log.e("eorror", e.toString());
-//                        }
-//
-//                    }
-//                }
-//                webView!!.evaluateJavascript(WEBJS_SESSION_STORAGE) {
-//                    s ->
-//                    Log.d("sessionStorage", s);
-//                }
-//                webView!!.evaluateJavascript(WEBVIEW_AUTH_JS) { s ->
-//                    if (s != "\"{}\"") {
-//                        val jsonAsStr = s.substring(1, s.length - 1)  // remove wrapping quotes
-//                            .replace("\\\\", "\\")        // unescape \\ -> \
-//                            .replace("\\\"", "\"");
-//                        Log.d("jsonAsStr: ", jsonAsStr);
-//                        try {
-//                            val obj = JSONObject(jsonAsStr);
-//                            token = obj.getString("access_token").toString();
-//                            var phoneNo = obj.getString("phone_number").toString();
-//                            var pan ="ALKPC6719M";// obj.getString("pan").toString()
-//                            var username = "fbb21cc5-25d0-4e0d-a68c-0ae13e5cafa1";//obj.getString("company_user_uuid").toString()
-//                            Log.d("token", token);
-//                            AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
-//                            AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
-//                            AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
-//                            AppPreference.GetInstance()!!.setUsername(this@MainActivity, username)
-//                            Log.d("localStorage", obj.toString());
-//                        } catch (e: JSONException) {
-//                            Log.e("error localStorage ----", e.toString());
-//                        }
-//                    }
-//                }
 
 //                view?.let { webView ->
 //                    webView.evaluateJavascript(WEBVIEW_LOCAL_CURRENT_STAGE) { result ->
@@ -197,43 +153,40 @@ class MainActivity : AppCompatActivity(),
 //                }
             }
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-                val urlStr = url.toString();
-                var urlHost = File(URL(urlStr).host).toString();
-                val endParams: String = File(URL(urlStr).getPath()).name;
+                val urlStr = url.toString()
+                var urlHost = File(URL(urlStr).host).toString()
+                val endParams: String = File(URL(urlStr).path).name
                 // your code
                 if (lastPage != endParams) {
-                    lastPage = endParams;
+                    lastPage = endParams
                     if (urlStr == "https://redirect-staging.mandii.com/dashboard") {
-                        Log.d("urlStr ----", urlStr);
-                        updateSessionStatus();
+                        updateSessionStatus()
                         Handler().postDelayed({
-                            Log.d("Print Timer", "new Date().toString()");
-                            updateWebToLocal();
+                            updateWebToLocal()
                         }, 10000)
                     }
                     if (endParams == "success" || endParams == "failure") {
-                        payment_status = endParams;
+                        payment_status = endParams
                     }
                     if (urlHost == "m.facebook.com") {
-                        webView!!.destroy();
-                        finish();
+                        webView!!.destroy()
+                        finish()
                         Handler().postDelayed({
                             Toast.makeText(
                                 this@MainActivity,
                                 "Payment got " + payment_status,
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000);
+                        }, 4000)
                     }
                     if (urlStr == "https://redirect-staging.mandii.com/") {
-                        webView!!.destroy();
-                        finish();
+                        webView!!.destroy()
+                        finish()
                     }
                     if (endParams == "logout") {
                         /// clear prefernce storage
                     }
                 }
-                Log.d("url", urlStr);
 //                Toast.makeText(this@MainActivity, "url: - $url", Toast.LENGTH_SHORT).show();
                 super.doUpdateVisitedHistory(view, url, isReload)
             }
@@ -242,29 +195,28 @@ class MainActivity : AppCompatActivity(),
                 handler: SslErrorHandler,
                 error: SslError
             ) {
-                Log.d("onReceivedSslError", "onReceivedSslError")
+//                Log.d("onReceivedSslError", "onReceivedSslError")
                 handler.proceed()
             }
 
 
             fun onConsoleMessage(message: String?, lineNumber: Int, sourceID: String?) {
                 webView!!.evaluateJavascript(WEBVIEW_LOCAL_CURRENT_STAGE,
-                    ValueCallback<String?> { s -> Log.e("OnRecieve", s!!) });
+                    ValueCallback<String?> { s -> Log.e("OnRecieve", s!!) })
             }
 
         }
 
         webView!!.webChromeClient = MyCustom_Api_ChromeClient()
-        webViewSettings!!.setMediaPlaybackRequiresUserGesture(false);
+        webViewSettings!!.mediaPlaybackRequiresUserGesture = false
         webViewSettings!!.javaScriptEnabled = true
         webViewSettings!!.domStorageEnabled=true
         webViewSettings!!.databaseEnabled=true
         webViewSettings!!.useWideViewPort=true
-//        webViewSettings!!.cacheMode = WebSettings.LOAD_DEFAULT;
-        webViewSettings!!.defaultTextEncodingName = "utf-8";
-        webViewSettings!!.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK;
-        webViewSettings!!.setAppCacheEnabled(true);
-        webViewSettings!!.setAppCachePath(cacheDir.absolutePath + "/webViewCache");
+        webViewSettings!!.defaultTextEncodingName = "utf-8"
+        webViewSettings!!.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+        webViewSettings!!.setAppCacheEnabled(true)
+        webViewSettings!!.setAppCachePath(cacheDir.absolutePath + "/webViewCache")
         if (WebViewFeature.isFeatureSupported(WebViewFeature.START_SAFE_BROWSING)) {
             WebViewCompat.startSafeBrowsing(this, ValueCallback<Boolean> { success ->
                 safeBrowsingIsInitialized = true
@@ -277,8 +229,8 @@ class MainActivity : AppCompatActivity(),
         webViewSettings!!.allowFileAccess = true
         // If SDK version is greater of 19 then activate hardware acceleration otherwise activate software acceleration
         if (Build.VERSION.SDK_INT >= 19) {
-            webViewSettings!!.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-            webViewSettings!!.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+            webViewSettings!!.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            webViewSettings!!.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             webView!!.settings.cacheMode=WebSettings.LOAD_DEFAULT
             webView!!.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         } else if (Build.VERSION.SDK_INT >= 11 && Build.VERSION.SDK_INT < 19) {
@@ -287,60 +239,53 @@ class MainActivity : AppCompatActivity(),
         webView!!.loadUrl(mUrl)
 
         permissionHelper = PermissionHelper.getInstance(this)
-        img_close.setOnClickListener(View.OnClickListener() { finish() })
+        img_close.setOnClickListener(View.OnClickListener { finish() })
     }
     fun updateSessionStatus() {
         webView!!.evaluateJavascript(WEBJS_SESSION_STORAGE) { s ->
             try {
                 if(s != null) {
-                    val obj = jsonToStr(s);
-                    val stage = obj.getString("current_stage").toString();
-                    if(stage != "ENACH") {
-                        checkSessionEveryTime();
+                    val obj = jsonToStr(s)
+                    val stage = obj.getString("current_stage").toString()
+                    if(stage != "ENACH_COMPLETED") {
+                        checkSessionEveryTime()
                     }
-                    Log.d("stage", stage);
-                    AppPreference.GetInstance()!!.setCurrentStatus(this@MainActivity, stage);
+                    Log.d("stage", stage)
+                    AppPreference.GetInstance()!!.setCurrentStatus(this@MainActivity, stage)
                 }
             }catch (e: JSONException) {
-                Log.e("dfdfd", e.toString());
+                // here we can check current stage of session storage
             }
 
         }
     }
     fun checkSessionEveryTime() {
-        Log.d("start", "checkSessionEveryTime");
+        // current stage check
         handler.postDelayed(Runnable {
             run {
-                i++;
-                Log.d("postDelayed", i.toString());
-                updateSessionStatus();
+                updateSessionStatus()
             }
         }, 5000)
     }
     fun updateWebToLocal() {
         webView!!.evaluateJavascript(LOCAL_STORAGE_JS){s ->
             try {
-                val obj = jsonToStr(s);
-                val pan = obj.getString("company_pan").toString();
+                val obj = jsonToStr(s)
+                val pan = obj.getString("company_pan").toString()
                 AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
-                Log.d("local json str", pan);
             }catch(e: JSONException) {
-                Log.e("localStorage", e.toString());
+                Log.e("localStorage", e.toString())
             }
         }
         webView!!.evaluateJavascript(WEBVIEW_AUTH_JS) {s ->
             try {
-                val obj = jsonToStr(s);
-                token = obj.getString("access_token").toString();
-                var phoneNo = obj.getString("phone_number").toString();
-                var username = "fbb21cc5-25d0-4e0d-a68c-0ae13e5cafa1";//obj.getString("company_user_uuid").toString()
-                Log.d("token", token);
+                val obj = jsonToStr(s)
+                token = obj.getString("access_token").toString()
+                var phoneNo = obj.getString("phone_number").toString()
                 AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
                 AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
-                AppPreference.GetInstance()!!.setUsername(this@MainActivity, username)
-//                AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
             }catch (e: JSONException) {
-                Log.e("Error in auth", e.toString());
+//                Log.e("Error in auth", e.toString())
             }
         }
     }
@@ -490,7 +435,6 @@ class MainActivity : AppCompatActivity(),
 
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.d("checking Intent", data.toString());
         super.onActivityResult(requestCode, resultCode, data)
         permissionHelper!!.onActivityForResult(requestCode)
         when (requestCode) {
@@ -567,14 +511,14 @@ class MainActivity : AppCompatActivity(),
             try {
                 imageUri = FileProvider.getUriForFile(this@MainActivity,
                 "com.webprojectkotlin.fileprovider",
-                    createImageFile());
+                    createImageFile())
 //                imageUri = Uri.fromFile(createImageFile())
             } catch (e: IOException) {
                 e.printStackTrace()
             }
 
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            startActivityForResult(takePictureIntent, REQUEST_CODE_THUMBNAIL);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            startActivityForResult(takePictureIntent, REQUEST_CODE_THUMBNAIL)
 
 
 //            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
@@ -678,8 +622,8 @@ class MainActivity : AppCompatActivity(),
         protected const val REQUEST_CODE_THUMBNAIL = 3
         protected const val REQUEST_CODE_GALLERY = 4
         protected const val LOG_TAG = "!!!!!"
-        protected var payment_status = "";
-        protected var lastPage = "";
+        protected var payment_status = ""
+        protected var lastPage = ""
 
 
         protected val PERMISSIONS_CAMERA = arrayOf(

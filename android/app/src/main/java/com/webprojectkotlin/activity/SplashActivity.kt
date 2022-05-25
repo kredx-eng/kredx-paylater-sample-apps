@@ -28,10 +28,9 @@ import java.util.*
 
 
 class SplashActivity : AppCompatActivity() {
-    var phoneNumber = "+91";
-    var PAN = "ALKPC6719M";
-    var paymentUrl = "";
-    var callbackUrls = JSONObject();
+    var paymentUrl = ""
+    var callbackUrls = JSONObject()
+
     var permissionArrays = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -44,37 +43,31 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val btn_register =  findViewById(R.id.btn_register) as Button ///IN THIS LINE I AM GETTING THE ERROR
-        val btn_payment=  findViewById(R.id.btn_payment) as Button ///IN THIS LINE I AM GETTING THE ERROR
+        val btn_register =  findViewById<Button>(R.id.btn_register)
+        val btn_payment=  findViewById<Button>(R.id.btn_payment)
         btn_register.setOnClickListener {
-            checkPermission();
+            checkPermission()
         }
 
         btn_payment.setOnClickListener {
-            var token = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity);
-            var phoneNo= AppPreference.GetInstance()!!.getPhoneNo(this@SplashActivity);
-            var pan= AppPreference.GetInstance()!!.getPan(this@SplashActivity);
-            val intent= Intent(this, MainActivity::class.java);
-            if(token == null) {
+            var token = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity)
+            if(token == "access_token") {
                 Toast.makeText(applicationContext, "Please onboard first", Toast.LENGTH_LONG).show()
             } else {
-                getCreateOrder();
+                getCreateOrder()
             }
-//            showdialog();
-//            intent.putExtra("url", "https://bit.karza.in/s/6dg9tA6");
-//            startActivity(intent);
         }
     }
 
     private fun openWebview(url: String) {
-        val intent = Intent(this, MainActivity::class.java);
-        intent.putExtra("url", url);
-        startActivity(intent);
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("url", url)
+        startActivity(intent)
     }
 
 
     private fun requestPermission() {
-        val PERMISSION_REQUEST_CODE = 1;
+        val PERMISSION_REQUEST_CODE = 1
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this@SplashActivity,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -97,102 +90,79 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun checkPermission() {
-        var url = "https://redirect-staging.mandii.com/ib";
-        val PERMISSION_REQUEST_CODE = 1;
-        val permission = hasPermissions(this@SplashActivity);
-        if(permission) openWebview(url);
-        else  ActivityCompat.requestPermissions(
+        var url = "https://redirect-staging.mandii.com/ib"
+        val PERMISSION_REQUEST_CODE = 1
+        val permission = hasPermissions(this@SplashActivity)
+        if (permission) openWebview(url)
+        else ActivityCompat.requestPermissions(
             this@SplashActivity,
             permissionArrays,
             PERMISSION_REQUEST_CODE
         )
-         }
-
-    fun showdialog(){
-        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle("Enter Valid Phone Number")
-
-// Set up the input
-        val input = EditText(this)
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setHint("+91 xxx xxx xxxx")
-        input.maxLines = 1;
-        input.inputType = InputType.TYPE_CLASS_NUMBER;
-        input.setText(phoneNumber);
-        builder.setView(input)
-// Set up the buttons
-        builder.setPositiveButton("OK", DialogInterface.OnClickListener { dialog, which ->
-            // Here you get get input text from the Edittext
-            Log.d("TEXT", phoneNumber);
-            getCreateOrder();
-
-        })
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
-        builder.show()
     }
 
     fun getCreateOrder() {
-        var phoneNo= AppPreference.GetInstance()!!.getPhoneNo(this@SplashActivity);
-        var pan= AppPreference.GetInstance()!!.getPan(this@SplashActivity);
-        var orderId =  (Random().nextInt(900000) + 100000).toString();
-        var marchentId = "ABCD" + orderId;
-        var createOrderJObj = JSONObject();
+        var phoneNo= AppPreference.GetInstance()!!.getPhoneNo(this@SplashActivity)
+        var pan= AppPreference.GetInstance()!!.getPan(this@SplashActivity)
+        var orderId =  (Random().nextInt(900000) + 100000).toString()
+        var marchentId = "ABCD" + orderId
+        var createOrderJObj = JSONObject()
 
-        createOrderJObj.put("order_id", orderId);
-        createOrderJObj.put("order_amount", "1000");
-        createOrderJObj.put("merchant_order_number",  marchentId);
-        createOrderJObj.put("order_description", "testing webview app");
-        createOrderJObj.put("payment_confirmation_url", "https://facebook.com");
-        createOrderJObj.put("payment_notification_api", "https://facebook.com");
+        createOrderJObj.put("order_id", orderId)
+        createOrderJObj.put("order_amount", "1000")
+        createOrderJObj.put("merchant_order_number",  marchentId)
+        createOrderJObj.put("order_description", "testing webview app")
+        createOrderJObj.put("payment_confirmation_url", "https://facebook.com")
+        createOrderJObj.put("payment_notification_api", "https://facebook.com")
 
-        var customer_details = JSONObject();
-        customer_details.put("first_name", "XYZ");
-        customer_details.put("last_name", "Alpha");
-        customer_details.put("email", "user@kredx.com");
-        customer_details.put("phone", phoneNo);
-        customer_details.put("company_pan", pan);
+        var customer_details = JSONObject()
+        customer_details.put("first_name", "XYZ")
+        customer_details.put("last_name", "Alpha")
+        customer_details.put("email", "user@kredx.com")
+        customer_details.put("phone", phoneNo)
+        customer_details.put("company_pan", pan)
         createOrderJObj.put("customer_details", customer_details)
 
-        var billing_address = JSONObject();
-        billing_address.put("city", "bangalore");
-        billing_address.put("state", "karanatak");
-        billing_address.put("pincode", "530103");
-        billing_address.put("address_line_1", "4545454");
-        billing_address.put("address_line_2", "kredx");
-        billing_address.put("name", "user");
-        billing_address.put("phone", phoneNo);
+        var billing_address = JSONObject()
+        billing_address.put("city", "bangalore")
+        billing_address.put("state", "karanatak")
+        billing_address.put("pincode", "530103")
+        billing_address.put("address_line_1", "4545454")
+        billing_address.put("address_line_2", "kredx")
+        billing_address.put("name", "user")
+        billing_address.put("phone", phoneNo)
         createOrderJObj.put("billing_address", billing_address)
 
-        var shipping_address = JSONObject();
-        shipping_address.put("city", "bangalore");
-        shipping_address.put("state", "karanatak");
-        shipping_address.put("pincode", "530103");
-        shipping_address.put("address_line_1", "4545454");
-        shipping_address.put("address_line_2", "kredx");
-        shipping_address.put("name", "user");
-        shipping_address.put("phone", phoneNo);
+        var shipping_address = JSONObject()
+        shipping_address.put("city", "bangalore")
+        shipping_address.put("state", "karanatak")
+        shipping_address.put("pincode", "530103")
+        shipping_address.put("address_line_1", "4545454")
+        shipping_address.put("address_line_2", "kredx")
+        shipping_address.put("name", "user")
+        shipping_address.put("phone", phoneNo)
 
         createOrderJObj.put("shipping_address", shipping_address)
 
-        var tax_amount = JSONObject();
-        tax_amount.put("amount", "400");
-        tax_amount.put("currency", "INR");
-        createOrderJObj.put("tax_amount", tax_amount);
+        var tax_amount = JSONObject()
+        tax_amount.put("amount", "400")
+        tax_amount.put("currency", "INR")
+        createOrderJObj.put("tax_amount", tax_amount)
 
-        var urls = JSONObject();
-        urls.put("success", "https://www.facebook.com/login/");
-        urls.put("failure", "https://www.facebook.com/login/");
-        urls.put("cancel", "https://www.facebook.com/login/");
-        urls.put("notification", "https://www.facebook.com/login/");
-        createOrderJObj.put("urls", urls);
+        var urls = JSONObject()
+        urls.put("success", "https://www.facebook.com/login/")
+        urls.put("failure", "https://www.facebook.com/login/")
+        urls.put("cancel", "https://www.facebook.com/login/")
+        urls.put("notification", "https://www.facebook.com/login/")
+        createOrderJObj.put("urls", urls)
 
-        var notes = JSONObject();
-        notes.put("delivery_person_phone", "delivery_person_phone");
-        createOrderJObj.put("notes", urls);
+        var notes = JSONObject()
+        notes.put("delivery_person_phone", "delivery_person_phone")
+        createOrderJObj.put("notes", urls)
 
         val entity = StringEntity(createOrderJObj.toString())
-        var accessToken = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity);
-        Log.d("accessToken", accessToken.toString());
+        var accessToken = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity)
+        // we are using AsyncHttpClient, this can be replaced with some other api calling library
         ApiRequest.post(this, "/orders",accessToken.toString(), entity, object : JsonHttpResponseHandler() {
             override fun onSuccess(
                 statusCode: Int,
@@ -200,19 +170,12 @@ class SplashActivity : AppCompatActivity() {
                 response: JSONObject
             ) {
                 // If the response is JSONObject instead of expected JSONArray
-                Log.d("onSuccess", "onSuccess : $response");
-               paymentUrl =response.getString("redirect_url");
-                callbackUrls = response.getJSONObject("urls");
-                openWebview(paymentUrl);
-                Log.d("paymentUrl", paymentUrl);
-
-//                   response.get("redirect_url");
-//                paymentUrl
                 try {
+                    paymentUrl = response.getString("redirect_url")
+                    callbackUrls = response.getJSONObject("urls")
+                    openWebview(paymentUrl)
                     val serverResp = JSONObject(response.toString())
-
                 } catch (e: JSONException) {
-                    Log.e("api error", e.toString());
                     // TODO Auto-generated catch block
                     e.printStackTrace()
                 }
@@ -224,11 +187,10 @@ class SplashActivity : AppCompatActivity() {
                 responseString: String?,
                 throwable: Throwable?
             ) {
-                Log.d("onFailure", "onFailure : $responseString")
+//                Log.d("onFailure", "onFailure : $responseString")
                 try {
                 } catch (e: JSONException) {
-                    Log.e("api error", e.toString());
-                    // TODO Auto-generated catch block
+                     // TODO Auto-generated catch block
                     e.printStackTrace()
                 }
 
@@ -239,7 +201,6 @@ class SplashActivity : AppCompatActivity() {
                 headers: Array<out Header>?,
                 responseString: String?
             ) {
-                Log.d("onSuccess String", "onSuccess : $responseString")
                 super.onSuccess(statusCode, headers, responseString)
             }
 
@@ -248,7 +209,6 @@ class SplashActivity : AppCompatActivity() {
                 headers: Array<out Header>?,
                 response: JSONArray?
             ) {
-                Log.d("onSuccess JSONArray", "onSuccess : $response")
                 super.onSuccess(statusCode, headers, response)
             }
         })
