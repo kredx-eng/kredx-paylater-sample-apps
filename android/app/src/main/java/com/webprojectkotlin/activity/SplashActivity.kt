@@ -10,6 +10,7 @@ import android.text.InputType
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.loopj.android.http.JsonHttpResponseHandler
@@ -28,7 +29,9 @@ import java.util.*
 
 class SplashActivity : AppCompatActivity() {
     var phoneNumber = "+91";
-    var PAN = "PAN";
+    var PAN = "ALKPC6719M";
+    var paymentUrl = "";
+    var callbackUrls = JSONObject();
     var permissionArrays = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -48,18 +51,27 @@ class SplashActivity : AppCompatActivity() {
         }
 
         btn_payment.setOnClickListener {
+            var token = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity);
+            var phoneNo= AppPreference.GetInstance()!!.getPhoneNo(this@SplashActivity);
+            var pan= AppPreference.GetInstance()!!.getPan(this@SplashActivity);
             val intent= Intent(this, MainActivity::class.java);
-            showdialog();
+            if(token == null) {
+                Toast.makeText(applicationContext, "Please onboard first", Toast.LENGTH_LONG).show()
+            } else {
+                getCreateOrder();
+            }
+//            showdialog();
 //            intent.putExtra("url", "https://bit.karza.in/s/6dg9tA6");
 //            startActivity(intent);
         }
     }
 
-    private fun openWebview() {
+    private fun openWebview(url: String) {
         val intent = Intent(this, MainActivity::class.java);
-        intent.putExtra("url", "https://redirect-staging.mandii.com/ib");
+        intent.putExtra("url", url);
         startActivity(intent);
     }
+
 
     private fun requestPermission() {
         val PERMISSION_REQUEST_CODE = 1;
@@ -84,11 +96,11 @@ class SplashActivity : AppCompatActivity() {
         ActivityCompat.checkSelfPermission(this@SplashActivity, it) == PackageManager.PERMISSION_GRANTED
     }
 
-
     private fun checkPermission() {
+        var url = "https://redirect-staging.mandii.com/ib";
         val PERMISSION_REQUEST_CODE = 1;
         val permission = hasPermissions(this@SplashActivity);
-        if(permission) openWebview();
+        if(permission) openWebview(url);
         else  ActivityCompat.requestPermissions(
             this@SplashActivity,
             permissionArrays,
@@ -113,11 +125,9 @@ class SplashActivity : AppCompatActivity() {
             // Here you get get input text from the Edittext
             Log.d("TEXT", phoneNumber);
             getCreateOrder();
-//            m_Text = input.text.toString();
-//            var m_Text = input.text.toString();
+
         })
         builder.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
-
         builder.show()
     }
 
@@ -126,7 +136,6 @@ class SplashActivity : AppCompatActivity() {
         var pan= AppPreference.GetInstance()!!.getPan(this@SplashActivity);
         var orderId =  (Random().nextInt(900000) + 100000).toString();
         var marchentId = "ABCD" + orderId;
-        // val rp = RequestParams();
         var createOrderJObj = JSONObject();
 
         createOrderJObj.put("order_id", orderId);
@@ -165,14 +174,6 @@ class SplashActivity : AppCompatActivity() {
 
         createOrderJObj.put("shipping_address", shipping_address)
 
-//        var orderLineJArray = JSONArray();
-//        var order_line_object = JSONObject();
-//        order_line_object.put("name", "user");
-//        order_line_object.put("sku", "sku");
-//        order_line_object.put("quantity", "0");
-//        order_line_object.put("price", price.toString())
-//        orderLineJArray[0]= order_line_object;
-
         var tax_amount = JSONObject();
         tax_amount.put("amount", "400");
         tax_amount.put("currency", "INR");
@@ -189,11 +190,9 @@ class SplashActivity : AppCompatActivity() {
         notes.put("delivery_person_phone", "delivery_person_phone");
         createOrderJObj.put("notes", urls);
 
-        var order_lines = JSONArray();
-        var price = JSONObject();
-        //val requestParams: RequestParams = JsonHelper.toRequestParams(params)
         val entity = StringEntity(createOrderJObj.toString())
         var accessToken = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity);
+        Log.d("accessToken", accessToken.toString());
         ApiRequest.post(this, "/orders",accessToken.toString(), entity, object : JsonHttpResponseHandler() {
             override fun onSuccess(
                 statusCode: Int,
@@ -201,9 +200,17 @@ class SplashActivity : AppCompatActivity() {
                 response: JSONObject
             ) {
                 // If the response is JSONObject instead of expected JSONArray
-                Log.d("onSuccess", "onSuccess : $response")
+                Log.d("onSuccess", "onSuccess : $response");
+               paymentUrl =response.getString("redirect_url");
+                callbackUrls = response.getJSONObject("urls");
+                openWebview(paymentUrl);
+                Log.d("paymentUrl", paymentUrl);
+
+//                   response.get("redirect_url");
+//                paymentUrl
                 try {
                     val serverResp = JSONObject(response.toString())
+
                 } catch (e: JSONException) {
                     Log.e("api error", e.toString());
                     // TODO Auto-generated catch block

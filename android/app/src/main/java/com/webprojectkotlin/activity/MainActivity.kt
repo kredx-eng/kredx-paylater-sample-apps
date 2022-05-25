@@ -12,6 +12,7 @@ import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -32,27 +33,35 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.schedule
 
+
+fun jsonToStr (s: String): JSONObject {
+     var value = s.substring(1, s.length - 1)  // remove wrapping quotes
+           .replace("\\\\", "\\")        // unescape \\ -> \
+           .replace("\\\"", "\"");
+   return JSONObject(value);
+}
 
 class MainActivity : AppCompatActivity(),
     OnPermissionCallback {
     protected var permissionHelper: PermissionHelper? = null
     private var safeBrowsingIsInitialized: Boolean = false
 
-
-    /**
-     * Container for layout so snackbar knows which layout to render against for permissions
-     *
-     * @type View
-     */
     protected var layoutWebView: View? = null
     private val APP_IMAGE_DIR = "images";
     val WEBVIEW_LOCAL_CURRENT_STAGE = "javascript:window.sessionStorage.getItem('current_stage');"
+    val WEBJS_SESSION_STORAGE = "(function() { return JSON.stringify(sessionStorage); })();"
+    val LOCAL_STORAGE_JS = "(function() { return JSON.stringify(localStorage); })();"
     var WEBVIEW_AUTH_JS = "(function() { return localStorage.getItem('auth'); })();"
-    var token = "javascript:window.localStorage.getItem('auth');"
-
+    var WEB_PAN_JS = "function() {return localStorage.getItem('company_pan')}";
+    var token = "";
+    var handler = Handler();
+    var flag = false;
+    var i= 0;
     /**
      * Container for temp file uri
      *
@@ -129,42 +138,53 @@ class MainActivity : AppCompatActivity(),
             ): WebResourceResponse? {
                 val payload = recorder.getPayload(request.method, request.url.toString())
                 Log.d("payload", payload.toString() + request.url);
+                Log.d("recorder", recorder.toString())
                 // handle the request with the given payload and return the response
                 return super.shouldInterceptRequest(view, request)
             }
+
             override fun onPageFinished(view: WebView, url: String) {
                 super.onPageFinished(view, url)
-                webView!!.evaluateJavascript("(function() { return JSON.stringify(sessionStorage); })();") {
-                    s ->
-                    Log.d("sessionStorage", s);
-                }
-                webView!!.evaluateJavascript(
-                    WEBVIEW_AUTH_JS,
-//                    "(function() { return JSON.stringify(localStorage); })();"
-                ) { s ->
-                    if (s != "\"{}\"") {
-                        Log.d("String s: ", s);
-                        val jsonAsStr = s.substring(1, s.length - 1)  // remove wrapping quotes
-                            .replace("\\\\", "\\")        // unescape \\ -> \
-                            .replace("\\\"", "\"");
-                        Log.d("jsonAsStr: ", jsonAsStr);
-                        try {
-                            val obj = JSONObject(jsonAsStr);
-                            token = obj.getString("access_token").toString();
-                            var phoneNo = obj.getString("phone_number").toString()
-                            var pan ="ERHPB1503H";// obj.getString("pan").toString()
-                            var username = "fbb21cc5-25d0-4e0d-a68c-0ae13e5cafa1";//obj.getString("company_user_uuid").toString()
-                            Log.d("token", token);
-                            AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
-                            AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
-                            AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
-                            AppPreference.GetInstance()!!.setUsername(this@MainActivity, username)
-                            Log.d("localStorage", obj.toString());
-                        } catch (e: JSONException) {
-                            Log.e("error localStorage ----", e.toString());
-                        }
-                    }
-                }
+
+//                webView!!.evaluateJavascript(WEB_PAN_JS) { s ->
+//                    Log.d("Pan Number: ", s);
+//                    if (s != "\"{}\"") {
+//                        try {
+//                            var pan = "";
+//                            AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
+//                        }catch(e: JSONException) {
+//                            Log.e("eorror", e.toString());
+//                        }
+//
+//                    }
+//                }
+//                webView!!.evaluateJavascript(WEBJS_SESSION_STORAGE) {
+//                    s ->
+//                    Log.d("sessionStorage", s);
+//                }
+//                webView!!.evaluateJavascript(WEBVIEW_AUTH_JS) { s ->
+//                    if (s != "\"{}\"") {
+//                        val jsonAsStr = s.substring(1, s.length - 1)  // remove wrapping quotes
+//                            .replace("\\\\", "\\")        // unescape \\ -> \
+//                            .replace("\\\"", "\"");
+//                        Log.d("jsonAsStr: ", jsonAsStr);
+//                        try {
+//                            val obj = JSONObject(jsonAsStr);
+//                            token = obj.getString("access_token").toString();
+//                            var phoneNo = obj.getString("phone_number").toString();
+//                            var pan ="ALKPC6719M";// obj.getString("pan").toString()
+//                            var username = "fbb21cc5-25d0-4e0d-a68c-0ae13e5cafa1";//obj.getString("company_user_uuid").toString()
+//                            Log.d("token", token);
+//                            AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
+//                            AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
+//                            AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
+//                            AppPreference.GetInstance()!!.setUsername(this@MainActivity, username)
+//                            Log.d("localStorage", obj.toString());
+//                        } catch (e: JSONException) {
+//                            Log.e("error localStorage ----", e.toString());
+//                        }
+//                    }
+//                }
 
 //                view?.let { webView ->
 //                    webView.evaluateJavascript(WEBVIEW_LOCAL_CURRENT_STAGE) { result ->
@@ -175,21 +195,46 @@ class MainActivity : AppCompatActivity(),
 ////                        }
 //                    }
 //                }
-//                js(webView!!, "jQuery(document).ready(function() {" +
-//                        "setInterval(function() {" + "jQuery('#myInput').css('background', '#'+(Math.random()*0xFFFFFF<<0).toString(16));"
-//                       + "console.log(`hello`);"
-//                        + "}, 1000);"
-//                        + "});"
-//                );
             }
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
                 val urlStr = url.toString();
+                var urlHost = File(URL(urlStr).host).toString();
+                val endParams: String = File(URL(urlStr).getPath()).name;
                 // your code
-                if(urlStr == "https://redirect-staging.mandii.com/") {
-                    webView!!.destroy();
-                    finish();
+                if (lastPage != endParams) {
+                    lastPage = endParams;
+                    if (urlStr == "https://redirect-staging.mandii.com/dashboard") {
+                        Log.d("urlStr ----", urlStr);
+                        updateSessionStatus();
+                        Handler().postDelayed({
+                            Log.d("Print Timer", "new Date().toString()");
+                            updateWebToLocal();
+                        }, 10000)
+                    }
+                    if (endParams == "success" || endParams == "failure") {
+                        payment_status = endParams;
+                    }
+                    if (urlHost == "m.facebook.com") {
+                        webView!!.destroy();
+                        finish();
+                        Handler().postDelayed({
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Payment got " + payment_status,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }, 4000);
+                    }
+                    if (urlStr == "https://redirect-staging.mandii.com/") {
+                        webView!!.destroy();
+                        finish();
+                    }
+                    if (endParams == "logout") {
+                        /// clear prefernce storage
+                    }
                 }
-                Toast.makeText(this@MainActivity, "url: - $url", Toast.LENGTH_SHORT).show();
+                Log.d("url", urlStr);
+//                Toast.makeText(this@MainActivity, "url: - $url", Toast.LENGTH_SHORT).show();
                 super.doUpdateVisitedHistory(view, url, isReload)
             }
             override fun onReceivedSslError(
@@ -211,7 +256,6 @@ class MainActivity : AppCompatActivity(),
 
         webView!!.webChromeClient = MyCustom_Api_ChromeClient()
         webViewSettings!!.setMediaPlaybackRequiresUserGesture(false);
-
         webViewSettings!!.javaScriptEnabled = true
         webViewSettings!!.domStorageEnabled=true
         webViewSettings!!.databaseEnabled=true
@@ -244,6 +288,61 @@ class MainActivity : AppCompatActivity(),
 
         permissionHelper = PermissionHelper.getInstance(this)
         img_close.setOnClickListener(View.OnClickListener() { finish() })
+    }
+    fun updateSessionStatus() {
+        webView!!.evaluateJavascript(WEBJS_SESSION_STORAGE) { s ->
+            try {
+                if(s != null) {
+                    val obj = jsonToStr(s);
+                    val stage = obj.getString("current_stage").toString();
+                    if(stage != "ENACH") {
+                        checkSessionEveryTime();
+                    }
+                    Log.d("stage", stage);
+                    AppPreference.GetInstance()!!.setCurrentStatus(this@MainActivity, stage);
+                }
+            }catch (e: JSONException) {
+                Log.e("dfdfd", e.toString());
+            }
+
+        }
+    }
+    fun checkSessionEveryTime() {
+        Log.d("start", "checkSessionEveryTime");
+        handler.postDelayed(Runnable {
+            run {
+                i++;
+                Log.d("postDelayed", i.toString());
+                updateSessionStatus();
+            }
+        }, 5000)
+    }
+    fun updateWebToLocal() {
+        webView!!.evaluateJavascript(LOCAL_STORAGE_JS){s ->
+            try {
+                val obj = jsonToStr(s);
+                val pan = obj.getString("company_pan").toString();
+                AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
+                Log.d("local json str", pan);
+            }catch(e: JSONException) {
+                Log.e("localStorage", e.toString());
+            }
+        }
+        webView!!.evaluateJavascript(WEBVIEW_AUTH_JS) {s ->
+            try {
+                val obj = jsonToStr(s);
+                token = obj.getString("access_token").toString();
+                var phoneNo = obj.getString("phone_number").toString();
+                var username = "fbb21cc5-25d0-4e0d-a68c-0ae13e5cafa1";//obj.getString("company_user_uuid").toString()
+                Log.d("token", token);
+                AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
+                AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
+                AppPreference.GetInstance()!!.setUsername(this@MainActivity, username)
+//                AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
+            }catch (e: JSONException) {
+                Log.e("Error in auth", e.toString());
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -579,9 +678,10 @@ class MainActivity : AppCompatActivity(),
         protected const val REQUEST_CODE_THUMBNAIL = 3
         protected const val REQUEST_CODE_GALLERY = 4
         protected const val LOG_TAG = "!!!!!"
+        protected var payment_status = "";
+        protected var lastPage = "";
 
-        //protected static final String WEB_VIEW_URL = "https://dev_mpurcell.shouttag.com/test.html";
-        protected const val WEB_VIEW_URL = "https://dev_mpurcell.shouttag.com"
+
         protected val PERMISSIONS_CAMERA = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
