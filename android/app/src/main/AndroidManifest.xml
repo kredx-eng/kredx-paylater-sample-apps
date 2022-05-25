@@ -32,7 +32,7 @@
         <meta-data android:name="android.webkit.WebView.MetricsOptOut"
             android:value="true" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:theme="@style/Theme.WebProjectKotlin"
             android:exported="true">
             <intent-filter>

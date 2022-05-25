@@ -27,22 +27,21 @@ import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import com.fastaccess.permission.base.PermissionHelper
 import com.fastaccess.permission.base.callback.OnPermissionCallback
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.webprojectkotlin.preference.AppPreference
 import org.json.JSONException
 import org.json.JSONObject
-import setAccessToken
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-public class MainActivity : AppCompatActivity(),
+class MainActivity : AppCompatActivity(),
     OnPermissionCallback {
     protected var permissionHelper: PermissionHelper? = null
     private var safeBrowsingIsInitialized: Boolean = false
+
+
     /**
      * Container for layout so snackbar knows which layout to render against for permissions
      *
@@ -139,17 +138,27 @@ public class MainActivity : AppCompatActivity(),
                     s ->
                     Log.d("sessionStorage", s);
                 }
-                webView!!.evaluateJavascript(WEBVIEW_AUTH_JS,
+                webView!!.evaluateJavascript(
+                    WEBVIEW_AUTH_JS,
 //                    "(function() { return JSON.stringify(localStorage); })();"
                 ) { s ->
                     if (s != "\"{}\"") {
-                    val jsonAsStr = s.substring(1, s.length - 1)  // remove wrapping quotes
-                        .replace("\\\\", "\\")        // unescape \\ -> \
-                        .replace("\\\"", "\"");
+                        Log.d("String s: ", s);
+                        val jsonAsStr = s.substring(1, s.length - 1)  // remove wrapping quotes
+                            .replace("\\\\", "\\")        // unescape \\ -> \
+                            .replace("\\\"", "\"");
+                        Log.d("jsonAsStr: ", jsonAsStr);
                         try {
                             val obj = JSONObject(jsonAsStr);
                             token = obj.getString("access_token").toString();
-                            setAccessToken(token);
+                            var phoneNo = obj.getString("phone_number").toString()
+                            var pan ="ERHPB1503H";// obj.getString("pan").toString()
+                            var username = "fbb21cc5-25d0-4e0d-a68c-0ae13e5cafa1";//obj.getString("company_user_uuid").toString()
+                            Log.d("token", token);
+                            AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
+                            AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
+                            AppPreference.GetInstance()!!.setPan(this@MainActivity, pan)
+                            AppPreference.GetInstance()!!.setUsername(this@MainActivity, username)
                             Log.d("localStorage", obj.toString());
                         } catch (e: JSONException) {
                             Log.e("error localStorage ----", e.toString());
