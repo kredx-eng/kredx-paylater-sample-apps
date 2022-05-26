@@ -1,4 +1,4 @@
-package com.webprojectkotlin
+package com.bnplwebview
 
 import org.junit.Test
 

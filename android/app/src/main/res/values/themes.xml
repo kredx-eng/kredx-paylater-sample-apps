@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.WebProjectKotlin.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog">
+    <style name="Theme.bnplwebview.Dialog" parent="Theme.MaterialComponents.DayNight.Dialog">
         <!-- Primary brand color. -->
         <item name="android:windowNoTitle">true</item>
 
@@ -19,7 +19,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="Theme.WebProjectKotlin" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.bnplwebview" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>

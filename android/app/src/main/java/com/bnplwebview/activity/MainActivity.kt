@@ -1,4 +1,4 @@
-package com.webprojectkotlin
+package com.bnplwebview
 
 import android.Manifest
 import android.app.AlertDialog
@@ -9,10 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.net.http.SslError
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
+import android.os.*
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -24,11 +21,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import com.bnplwebview.preference.AppPreference
 import com.fastaccess.permission.base.PermissionHelper
 import com.fastaccess.permission.base.callback.OnPermissionCallback
-import com.webprojectkotlin.preference.AppPreference
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -39,10 +37,10 @@ import java.util.*
 
 
 fun jsonToStr (s: String): JSONObject {
-     var value = s.substring(1, s.length - 1)  // remove wrapping quotes
+     val value = s.substring(1, s.length - 1)  // remove wrapping quotes
            .replace("\\\\", "\\")        // unescape \\ -> \
-           .replace("\\\"", "\"");
-   return JSONObject(value);
+           .replace("\\\"", "\"")
+   return JSONObject(value)
 }
 
 class MainActivity : AppCompatActivity(),
@@ -50,14 +48,16 @@ class MainActivity : AppCompatActivity(),
     protected var permissionHelper: PermissionHelper? = null
     private var safeBrowsingIsInitialized: Boolean = false
 
-    protected var layoutWebView: View? = null
+//    protected var layoutWebView: View? = null
     private val APP_IMAGE_DIR = "images"
     val WEBVIEW_LOCAL_CURRENT_STAGE = "javascript:window.sessionStorage.getItem('current_stage');"
     val WEBJS_SESSION_STORAGE = "(function() { return JSON.stringify(sessionStorage); })();"
     val LOCAL_STORAGE_JS = "(function() { return JSON.stringify(localStorage); })();"
     var WEBVIEW_AUTH_JS = "(function() { return localStorage.getItem('auth'); })();"
     var token = ""
-    var handler = Handler()
+    val handler = Handler(Looper.getMainLooper())
+    var swipeRefreshLayout: SwipeRefreshLayout? = null
+
 
     /**
      * Container for temp file uri
@@ -90,14 +90,27 @@ class MainActivity : AppCompatActivity(),
         val img_close by lazy { findViewById<ImageView>(R.id.img_close) }
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         mUrl= intent.getStringExtra("url").toString()
-        layoutWebView = findViewById(R.id.my_web_view)
         webView = findViewById<WebView>(R.id.my_web_view)
+        swipeRefreshLayout = findViewById(R.id.swipe);
+        swipeRefreshLayout!!.setOnRefreshListener {
+            swipeRefreshLayout!!.isRefreshing = true
+            Handler().postDelayed({
+                swipeRefreshLayout!!.isRefreshing = false
+                webView!!.reload();
+            }, 3000)
+        }
+        swipeRefreshLayout!!.setColorSchemeColors(
+            getResources().getColor(android.R.color.holo_blue_bright),
+            getResources().getColor(android.R.color.holo_orange_dark),
+            getResources().getColor(android.R.color.holo_green_dark),
+            getResources().getColor(android.R.color.holo_red_dark)
+        );
         webViewSettings = webView!!.settings
         webViewSettings!!.javaScriptEnabled = true
         webViewSettings!!.loadWithOverviewMode = true
         webViewSettings!!.allowFileAccess = true
-        webViewSettings!!.setSupportMultipleWindows(true);
-        webViewSettings!!.javaScriptCanOpenWindowsAutomatically = true;
+        webViewSettings!!.setSupportMultipleWindows(true)
+        webViewSettings!!.javaScriptCanOpenWindowsAutomatically = true
         webViewSettings!!.setGeolocationEnabled(true)
         val recorder = PayloadRecorder()
         webView!!.addJavascriptInterface(recorder, "recorder")
@@ -133,7 +146,7 @@ class MainActivity : AppCompatActivity(),
                 view: WebView,
                 request: WebResourceRequest
             ): WebResourceResponse? {
-                val payload = recorder.getPayload(request.method, request.url.toString())
+//                val payload = recorder.getPayload(request.method, request.url.toString())
                 Log.d("recorder", recorder.toString())
                 // handle the request with the given payload and return the response
                 return super.shouldInterceptRequest(view, request)
@@ -154,7 +167,7 @@ class MainActivity : AppCompatActivity(),
             }
             override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
                 val urlStr = url.toString()
-                var urlHost = File(URL(urlStr).host).toString()
+                val urlHost = File(URL(urlStr).host).toString()
                 val endParams: String = File(URL(urlStr).path).name
                 // your code
                 if (lastPage != endParams) {
@@ -196,7 +209,9 @@ class MainActivity : AppCompatActivity(),
                 error: SslError
             ) {
 //                Log.d("onReceivedSslError", "onReceivedSslError")
-                handler.proceed()
+                super.onReceivedSslError(view, handler, error);
+                handler.proceed();
+                handler.cancel();
             }
 
 
@@ -241,6 +256,7 @@ class MainActivity : AppCompatActivity(),
         permissionHelper = PermissionHelper.getInstance(this)
         img_close.setOnClickListener(View.OnClickListener { finish() })
     }
+
     fun updateSessionStatus() {
         webView!!.evaluateJavascript(WEBJS_SESSION_STORAGE) { s ->
             try {
@@ -281,7 +297,7 @@ class MainActivity : AppCompatActivity(),
             try {
                 val obj = jsonToStr(s)
                 token = obj.getString("access_token").toString()
-                var phoneNo = obj.getString("phone_number").toString()
+                val phoneNo = obj.getString("phone_number").toString()
                 AppPreference.GetInstance()!!.setAccessToken(this@MainActivity, token)
                 AppPreference.GetInstance()!!.setPhoneNo(this@MainActivity, phoneNo)
             }catch (e: JSONException) {
@@ -510,7 +526,7 @@ class MainActivity : AppCompatActivity(),
             var imageUri: Uri? = null
             try {
                 imageUri = FileProvider.getUriForFile(this@MainActivity,
-                "com.webprojectkotlin.fileprovider",
+                "com.bnplwebview.fileprovider",
                     createImageFile())
 //                imageUri = Uri.fromFile(createImageFile())
             } catch (e: IOException) {

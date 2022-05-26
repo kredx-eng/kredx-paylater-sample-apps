@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.webprojectkotlin.MainActivity">
+    tools:context="com.bnplwebview.MainActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -18,44 +18,68 @@
         tools:src="@drawable/id"
         tools:srcCompat="@drawable/id" />
 
-    <ImageView
-        android:id="@+id/kredxLogo"
-        tools:srcCompat="@drawable/ic_launcher_foreground"
-        android:src="@drawable/ic_launcher_foreground"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:contentDescription="TODO" />
+<!--    <ImageView-->
+<!--        android:id="@+id/kredxLogo"-->
+<!--        tools:srcCompat="@drawable/ic_launcher_foreground"-->
+<!--        android:src="@drawable/ic_launcher_foreground"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:contentDescription="TODO" />-->
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:fontFamily="serif-monospace"
+        android:lineSpacingExtra="8sp"
+        android:text="@string/Heading"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
         android:text="@string/title"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="24sp"
+        android:layout_margin="10dp"
         android:textStyle="bold" />
+
     <TextView
         android:id="@+id/heading2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:textColor="@color/black"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif"
         android:gravity="center"
-        android:text="@string/heading2" />
+        android:text="@string/heading2"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        android:padding="15dp"
         android:text="@string/bnpl_register"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        app:cornerRadius="10dp"
+        />
     <Button
         android:id="@+id/btn_payment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:layout_marginHorizontal="20dp"
+        app:cornerRadius="10dp"
         android:textColor="@color/white"
         android:text="@string/payment_gateway" />
 </LinearLayout>

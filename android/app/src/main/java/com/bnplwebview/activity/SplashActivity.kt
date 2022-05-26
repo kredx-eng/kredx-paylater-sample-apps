@@ -1,4 +1,4 @@
-package com.webprojectkotlin.activity
+package com.bnplwebview.activity
 
 import android.Manifest
 import android.content.Context
@@ -6,19 +6,16 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.text.InputType
 import android.util.Log
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
-import com.webprojectkotlin.MainActivity
-import com.webprojectkotlin.R
-import com.webprojectkotlin.api.ApiRequest
-import com.webprojectkotlin.preference.AppPreference
+import com.bnplwebview.MainActivity
+import com.bnplwebview.R
+import com.bnplwebview.api.ApiRequest
+import com.bnplwebview.preference.AppPreference
 import cz.msebera.android.httpclient.Header
 import cz.msebera.android.httpclient.entity.StringEntity
 import org.json.JSONArray
@@ -51,7 +48,8 @@ class SplashActivity : AppCompatActivity() {
 
         btn_payment.setOnClickListener {
             var token = AppPreference.GetInstance()!!.getAccessToken(this@SplashActivity)
-            if(token == "access_token") {
+            Log.d("token", token.toString());
+            if(token.toString() !== null) {
                 Toast.makeText(applicationContext, "Please onboard first", Toast.LENGTH_LONG).show()
             } else {
                 getCreateOrder()

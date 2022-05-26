@@ -5,11 +5,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="@dimen/cardview_compat_inset_shadow"
-    tools:context="com.webprojectkotlin.MainActivity">
+    tools:context="com.bnplwebview.MainActivity">
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:ignore="MissingClass">
+
     <WebView
         android:id="@+id/my_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"

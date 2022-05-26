@@ -1,4 +1,4 @@
-package com.webprojectkotlin.model
+package com.bnplwebview.model
 
 class CreateOrderRequestModel {
     private val order_amount = 0.0

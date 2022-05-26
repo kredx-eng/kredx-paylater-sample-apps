@@ -1,4 +1,4 @@
-package com.webprojectkotlin.preference
+package com.bnplwebview.preference
 
 object PreferenceHelp {
     var access_token = "access_token"

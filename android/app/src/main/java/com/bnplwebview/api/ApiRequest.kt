@@ -1,4 +1,4 @@
-package com.webprojectkotlin.api
+package com.bnplwebview.api
 
 import android.content.Context
 import com.loopj.android.http.AsyncHttpClient

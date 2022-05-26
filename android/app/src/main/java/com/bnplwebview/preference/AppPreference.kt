@@ -1,4 +1,4 @@
-package com.webprojectkotlin.preference
+package com.bnplwebview.preference
 
 import android.content.Context
 

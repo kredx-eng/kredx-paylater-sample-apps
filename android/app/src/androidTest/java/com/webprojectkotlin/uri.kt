@@ -1,4 +1,4 @@
-package com.webprojectkotlin
+package com.bnplwebview
 
 enum class uri {
 
