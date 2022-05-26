@@ -784,9 +784,8 @@ class PayloadRecorder {
 
 #### Create order for redirecting path
 
-```html
-
-  Post  /orders
+```http
+  POST /order
 ```
 
 | Parameter | Type     | Description                |
