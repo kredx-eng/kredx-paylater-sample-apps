@@ -57,9 +57,10 @@ build.gradle
 
 ## API Reference
 
-#### Get all items
+#### Create Sample Order for dynamic transcation link
 
-```http
+```text
+
   Post /orders
 ```
 
