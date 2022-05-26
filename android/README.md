@@ -53,35 +53,32 @@ build.gradle
   - **Second button** `Payment Flow` this check where user has onboardeded successfully or not. If onboardeded this store the token of user in local storage and then this button will hit the Order Create Api and pass url intent into webview `MainActivity`.
 - [MainActivity](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) this actvity is having a dialog box which contains a webview and this webview is having a certian modifications according to the requirement.
 
+
 ## Libraries
 
 ```sh
 implementation 'androidx.webkit:webkit:1.4.0'
 ```
-##### This webview we are using for showing webview pages
+###### This webview we are using for showing webview pages
 
 ```sh
 implementation 'com.loopj.android:android-async-http:1.4.9'
 ```
-
 ###### This Async https we are using for api calling
-
 ```sh
 implementation 'com.github.k0shk0sh:PermissionHelper:1.1.0'
 ```
-
 ###### This we are using to capture mobile application permission for vKYC
-
 ```sh
 implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 ```
-
 ###### This we are using for custom pull to refresh
 
-## Tutorial to use this code into your project
 
-**Step1.**   Create a event to open onboarding flow and pass below url into our custom bridge intent webview
 
+##Tutorial to use this code into your project
+
+**Step1.** 		Create a event to open onboarding flow and pass below url into our custom bridge intent webview
 ```sh
 https://redirect-staging.mandii.com/    + `customer tag`
 ```
@@ -98,10 +95,10 @@ before calling this please take all user permission or you can use our checkPerm
     }
 ```
 
-`
-** [Note: ]() We are naming this webview with MainActvity you can name something else
-`
-**Step2.** Create BNPL actvity folder and inside that create kotlin class for webview and use below code. (class name example **BnplWebview.kt**)
+``
+[Note: ]() We are naming this webview with MainActvity you can name something else
+``
+**Step2.**	Create BNPL actvity folder and inside that create kotlin class for webview and use below code. (class name example **BnplWebview.kt**)
 
 ````html
 package com.bnplwebview
@@ -739,8 +736,7 @@ class PayloadRecorder {
 }
 
 ````
-
-**Step3:** Create BNPL xml layout for webview and use below code. (class name example **BnplWebview.xml**)
+**Step3: ** Create BNPL xml layout for webview and use below code. (class name example **BnplWebview.xml**)
 
 ```html
 <?xml version="1.0" encoding="utf-8"?>
@@ -778,9 +774,9 @@ class PayloadRecorder {
 </RelativeLayout>
 ```
 
-## Payment Flow If required
+##Payment Flow If required
 
-##### After onboarding you can intregate a payment flow code which required a auth token which we are storing thi preference storage which we can store in some other local db or global state. after this we need to intregate a order creating api which we can pass our order amount user personal details and user shipping and billing addresses. this will generate a payment redirected link with calls urls. this callback urls will navigate you once payment will get sucess and failure
+##### After onboarding you can intregate a payment flow code which required a auth token which we are storing thi preference storage which we can store in some other local db or global state. after this we need to intregate a order creating api which we can pass our order amount user personal details and user shipping and billing addresses. this will generate a payment redirected link with calls urls. this callback urls will navigate you once payment will get sucess and failure.
 
 ## API Reference
 
@@ -803,7 +799,9 @@ class PayloadRecorder {
 | `order_lines` | `[{}]` | **Required**. Your API key |
 | `urls` | `object` | **Required**. Your API key |
 
+
 ###### In this project we are using asynchttps library for rest api connection you can use anyother library according to your project
+
 
 ### This api will return you the payment redirected url which we need to pass in above [webview class](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) intent
 
