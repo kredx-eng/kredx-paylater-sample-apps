@@ -808,3 +808,8 @@ class PayloadRecorder {
 ### This api will return you the payment redirected url which we need to pass in above [webview class](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) intent
 
 [34]: https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/SplashActivity.kt "SplashActvity"
+
+
+## Demo
+
+Video and screenshot
