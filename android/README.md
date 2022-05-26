@@ -786,7 +786,7 @@ class PayloadRecorder {
 
 ```http
 
-  Post /orders
+  Post  - /orders
 ```
 
 | Parameter | Type     | Description                |
