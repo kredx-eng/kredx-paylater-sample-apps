@@ -53,19 +53,31 @@ build.gradle
   - **Second button** `Payment Flow` this check where user has onboardeded successfully or not. If onboardeded this store the token of user in local storage and then this button will hit the Order Create Api and pass url intent into webview `MainActivity`.
 - [MainActivity](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) this actvity is having a dialog box which contains a webview and this webview is having a certian modifications according to the requirement.
 
-## Library
-```text
 
-**implementation 'androidx.webkit:webkit:1.4.0'**
-This webview we are using for showing webview pages
-**implementation 'com.loopj.android:android-async-http:1.4.9'**
-This Async https we are using for api calling
-**implementation 'com.github.k0shk0sh:PermissionHelper:1.1.0'**
-This we are using to capture mobile application permission for vKYC
-**implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'**
-This we are using for custom pull to refresh
+## Libraries
 
+```sh
+implementation 'androidx.webkit:webkit:1.4.0'
 ```
+######This webview we are using for showing webview pages
+
+```sh
+implementation 'com.loopj.android:android-async-http:1.4.9'
+```
+###### This Async https we are using for api calling
+```sh
+implementation 'com.github.k0shk0sh:PermissionHelper:1.1.0'
+```
+###### This we are using to capture mobile application permission for vKYC
+```sh
+implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+```
+###### This we are using for custom pull to refresh
+
+
+
+
+
 ##Tutorial to use this code into your project
 
 **Step1.** 		Create a event to open onboarding flow and pass below url into our custom bridge intent webview
