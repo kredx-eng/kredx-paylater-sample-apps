@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity(),
     OnPermissionCallback {
     protected var permissionHelper: PermissionHelper? = null
     private var safeBrowsingIsInitialized: Boolean = false
-
-//    protected var layoutWebView: View? = null
     private val APP_IMAGE_DIR = "images"
     val WEBVIEW_LOCAL_CURRENT_STAGE = "javascript:window.sessionStorage.getItem('current_stage');"
     val WEBJS_SESSION_STORAGE = "(function() { return JSON.stringify(sessionStorage); })();"
@@ -489,9 +487,7 @@ class MainActivity : AppCompatActivity(),
                 val selectedImageUri = data?.data
                 val localIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, selectedImageUri)
                 this@MainActivity.sendBroadcast(localIntent)
-
                 // If we want to downsize check out the post
-                //  http://stackoverflow.com/questions/2507898/how-to-pick-an-image-from-gallery-sd-card-for-my-app
                 fileUriCallback!!.onReceiveValue(arrayOf(selectedImageUri))
                 null
             } else {
@@ -528,17 +524,12 @@ class MainActivity : AppCompatActivity(),
                 imageUri = FileProvider.getUriForFile(this@MainActivity,
                 "com.bnplwebview.fileprovider",
                     createImageFile())
-//                imageUri = Uri.fromFile(createImageFile())
             } catch (e: IOException) {
                 e.printStackTrace()
             }
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             startActivityForResult(takePictureIntent, REQUEST_CODE_THUMBNAIL)
-
-
-//            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-//            startActivityForResult(takePictureIntent, REQUEST_CODE_THUMBNAIL)
         }
     }
 
@@ -547,16 +538,6 @@ class MainActivity : AppCompatActivity(),
         i.addCategory(Intent.CATEGORY_OPENABLE)
         i.type = "*/*"
         startActivityForResult(Intent.createChooser(i, "File Chooser"), REQUEST_CODE_GALLERY)
-
-//        val intent = Intent()
-//        intent.type = "image/*"
-//        intent.action = Intent.ACTION_PICK
-//        startActivityForResult(
-//            Intent.createChooser(
-//                intent,
-//                this.getString(R.string.select_image_from_gallery)
-//            ), REQUEST_CODE_GALLERY
-//        )
     }
 
     /*
@@ -625,9 +606,6 @@ class MainActivity : AppCompatActivity(),
             if (listOf(*permissions).contains(Manifest.permission.CAMERA)) {
                 showCamera()
             }else if(listOf(*permissions).contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            }
-            else {
-//                showGallery()
             }
         }
     }
