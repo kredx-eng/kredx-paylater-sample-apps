@@ -790,16 +790,16 @@ class PayloadRecorder {
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `order_amount` | `number` | **Required**. Your API key |
-| `merchant_order_number` | `string` | **Required**. Your API key |
-| `discounts` | `[]` | **Required**. Your API key |
-| `tax_amount` | `object` | **Required**. Your API key |
-| `order_description` | `string` | **Required**. Your API key |
-| `customer_details` | {"first_name": "string", "last_name": "string", "email": "string","phone": "string","company_pan": "string"} | **Required**. Your API key |
-| `billing_address` | `object` | **Required**. Your API key |
-| `shipping_address` | `object` | **Required**. Your API key |
-| `order_lines` | `[{}]` | **Required**. Your API key |
-| `urls` | `object` | **Required**. Your API key |
+| `order_amount` | `number` | **Required**. API key |
+| `merchant_order_number` | `string` | **Required**. API key |
+| `discounts` | `[]` | **Required**. API key |
+| `tax_amount` | `object` | **Required**. API key |
+| `order_description` | `string` | **Required**.  API key |
+| `customer_details` | {"first_name": "string", "last_name": "string", "email": "string","phone": "string","company_pan": "string"} | **Required**. API key |
+| `billing_address` | `object` | **Required**. API key |
+| `shipping_address` | `object` | **Required**. API key |
+| `order_lines` | `[{}]` | **Required**. API key |
+| `urls` | `object` | **Required**. API key |
 
 
 ###### In this project we are using asynchttps library for rest api connection you can use anyother library according to your project
