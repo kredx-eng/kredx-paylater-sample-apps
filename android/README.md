@@ -98,6 +98,8 @@ before calling this please take all user permission or you can use our checkPerm
 ``
 [Note: ]() We are naming this webview with MainActvity you can name something else
 ``
+
+
 **Step2.**	Create BNPL actvity folder and inside that create kotlin class for webview and use below code. (class name example **BnplWebview.kt**)
 
 ````html
