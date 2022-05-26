@@ -11,6 +11,10 @@ Clone this repository and import into **Android Studio**
 git clone git@github.com:kredx-eng/BNPL-Webview-app.git
 ```
 
+## Documentation
+
+[Documentation]()
+
 ## Getting started
 
 This App contain 2 screens splash screen and main screen with dialogbox `BNPL webview`
@@ -53,6 +57,20 @@ build.gradle
   - **Second button** `Payment Flow` this check where user has onboardeded successfully or not. If onboardeded this store the token of user in local storage and then this button will hit the Order Create Api and pass url intent into webview `MainActivity`.
 - [MainActivity](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) this actvity is having a dialog box which contains a webview and this webview is having a certian modifications according to the requirement.
 
+
+## Library
+
+`implementation 'androidx.webkit:webkit:1.4.0'`
+This webview we are using for showing webview pages
+
+`implementation 'com.loopj.android:android-async-http:1.4.9'`
+This Async https we are using for api calling
+
+`implementation 'com.github.k0shk0sh:PermissionHelper:1.1.0'`
+This we are using to capture mobile application permission for vKYC
+
+`implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'`
+This we are using for custom pull to refresh
 
 
 ## API Reference

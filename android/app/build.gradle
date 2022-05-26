@@ -49,6 +49,4 @@ dependencies {
     implementation 'com.github.k0shk0sh:PermissionHelper:1.1.0'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.google.android.material:material:1.0.0'
-//    implementation 'com.google.android.gms:play-services:8.4.0'
 }
