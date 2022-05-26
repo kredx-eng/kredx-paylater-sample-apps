@@ -59,7 +59,7 @@ build.gradle
 
 #### Create Sample Order for dynamic transcation link
 
-```text
+```http
 
   Post /orders
 ```
