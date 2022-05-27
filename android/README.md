@@ -8,7 +8,7 @@ This application is having a bridging for BNPL onboarding flow and create paymen
 Clone this repository and import into **Android Studio**
 
 ```bash
-git clone git@github.com:kredx-eng/BNPL-Webview-app.git
+git clone git@github.com:kredx-eng/kredx-paylater-sample-apps.git
 ```
 
 ## Getting started
@@ -805,9 +805,9 @@ class PayloadRecorder {
 ###### In this project we are using asynchttps library for rest api connection you can use anyother library according to your project
 
 
-### This api will return you the payment redirected url which we need to pass in above [webview class](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) intent
+### This api will return you the payment redirected url which we need to pass in above [webview class](https://github.com/kredx-eng/kredx-paylater-sample-apps/blob/main/android/app/src/main/java/com/bnplwebview/activity/MainActivity.kt) intent
 
-[34]: https://github.com/kredx-eng/BNPL-Webview-app/blob/main/android/app/src/main/java/com/bnplwebview/activity/SplashActivity.kt "SplashActvity"
+[34]: https://github.com/kredx-eng/kredx-paylater-sample-apps/blob/main/android/app/src/main/java/com/bnplwebview/activity/SplashActivity.kt "SplashActvity"
 
 
 ## Demo
