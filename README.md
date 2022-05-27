@@ -1,2 +1,2 @@
-# BNPL-Webview-app
+# KredX PayLater Sample Applications
 # android
