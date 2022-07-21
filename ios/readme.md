@@ -1,11 +1,11 @@
 
-# BNPL Webview Android Application
+# BNPL Webview IOS Application
 
 This application is having a bridging for BNPL onboarding flow and create payment to payment flow.
 
 ## Installation
 
-Clone this repository and import into **Android Studio**
+Clone this repository and import into **xCode**
 
 ```bash
 git clone git@github.com:kredx-eng/kredx-paylater-sample-apps.git
@@ -19,16 +19,16 @@ This App contain 2 screens splash screen and main screen with dialogbox `BNPL we
  |
  |  BnplWebview-IOS/
  |       |                    
- |       |__MainView.swift                     
- |       |__WebviewController.swift               
- |       |_Main.storyboard
+ |       |__ MainView.swift                     
+ |       |__ WebviewController.swift               
+ |       |__ Main.storyboard
  |       |
- |       |_______   Networking
+ |       |_______  Networking
  |       |            |__ NetworkManager.swift
  |       |            |__ CreateOrder.swift
  |       |
  |       |
- |       |_______   Modal                   
+ |       |_______  Modal                   
  |       |           |__ storage.swift
  |       |           |__ apiData.swift
  |       |           |__ constant.swift
@@ -36,15 +36,8 @@ This App contain 2 screens splash screen and main screen with dialogbox `BNPL we
  |       |           |__ helper.swift
  |       |
  |       |
- |       |__ res/xml
- |       |      |
- |       |      |__ file_path.xml
- |       |      |__ network_security_config.xml
- |       |                      
- |       | 
- |       |__ AndroidManifest.xml
+ |       |__ Info.plist
 
-build.gradle
 ```
 
 - [MainView](https://github.com/kredx-eng/BNPL-Webview-app/blob/main/ios/BnplWebview-IOS/MainView.swift) is connected to main.storyboard which is the main landing page which is having two buttons which opens up conditionaly.
